@@ -27,6 +27,9 @@ add-apt-repository -y --keyserver hkp://keyserver.ubuntu.com:80 'deb http://down
 
 GHCVER=8.2.2
 
+OCILIBVER=4.4.0
+RDKAFKAVER=0.11.1
+
 apt-get update
 apt-get install -y \
     build-essential \
@@ -36,6 +39,7 @@ apt-get install -y \
     fsharp \
     g++ \
     gawk \
+    libgflags-dev \
     ghc-$GHCVER \
     ghc-$GHCVER-dyn \
     ghc-$GHCVER-htmldocs \
@@ -82,7 +86,9 @@ apt-get install -y \
     liblapack-dev \
     libleveldb-dev \
     liblmdb-dev \
+    liblz4-dev \
     liblzma-dev \
+    libzstd-dev \
     libmagic-dev \
     libmagickcore-dev \
     libmagickwand-dev \
@@ -100,6 +106,7 @@ apt-get install -y \
     libpcap0.8-dev \
     libpq-dev \
     libre2-dev \
+    libsasl2-dev \
     libsdl1.2-dev \
     libsdl2-dev \
     libsdl2-gfx-dev \
@@ -170,6 +177,24 @@ update-alternatives --install "/usr/bin/ld" "ld" "/usr/bin/ld.bfd" 10
 update-alternatives --install "/usr/bin/llc" "llc" "/usr/bin/llc-3.9" 50
 update-alternatives --install "/usr/bin/opt" "opt" "/usr/bin/opt-3.9" 50
 
+# install rocksdb libs
+cd /tmp \
+    && wget https://github.com/facebook/rocksdb/archive/v5.8.tar.gz \
+    && tar xvf v5.8.tar.gz \
+    && cd rocksdb-5.8 \
+    && make static_lib \
+    && make shared_lib
+
+# librdkafka
+cd /tmp \
+    && wget https://github.com/edenhill/librdkafka/archive/v$RDKAFKAVER.tar.gz \
+    && tar xvf /tmp/v$RDKAFKAVER.tar.gz \
+    && cd /tmp/librdkafka-$RDKAFKAVER \
+    && ./configure \
+    && make -j 2 V=0 \
+    && sudo make install \
+    && rm -rf /tmp/librdkafka-$RDKAFKAVER
+
 # install ocilib dependencies then build and install ocilib
 cd /tmp \
     && wget https://storage.googleapis.com/oracle.fpinsight.com/instantClient/oracle-instantclient12.1-basiclite_12.1.0.2.0-2_amd64.deb \
@@ -178,9 +203,9 @@ cd /tmp \
     && wget https://storage.googleapis.com/oracle.fpinsight.com/instantClient/oracle-instantclient12.1-devel_12.1.0.2.0-2_amd64.deb \
     && dpkg -i oracle-instantclient12.1-devel_12.1.0.2.0-2_amd64.deb \
     && rm -f oracle-instantclient12.1-devel_12.1.0.2.0-2_amd64.deb \
-    && wget https://github.com/vrogier/ocilib/archive/v4.3.2.tar.gz \
-    && tar xvf v4.3.2.tar.gz \
-    && cd /tmp/ocilib-4.3.2 \
+    && wget https://github.com/vrogier/ocilib/archive/v$OCILIBVER.tar.gz \
+    && tar xvf v$OCILIBVER.tar.gz \
+    && cd /tmp/ocilib-$OCILIBVER \
     && ./configure --with-oracle-import=linkage \
                    --with-oracle-charset=ansi \
                    --with-oracle-headers-path=/usr/include/oracle/12.1/client64 \
@@ -188,7 +213,7 @@ cd /tmp \
     && make \
     && make install \
     && cd \
-    && rm -rf /tmp/ocilib-4.3.2 \
+    && rm -rf /tmp/ocilib-$OCILIBVER \
     && echo "/usr/local/lib" > /etc/ld.so.conf.d/usr-local.conf \
     && echo "/usr/lib/oracle/12.1/client64/lib" > /etc/ld.so.conf.d/oracle-client.conf \
     && ldconfig
@@ -205,9 +230,12 @@ wget -O - http://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - \
 
 # Install version 3 of the protobuf compiler.  (The `protobuf-compiler` package only
 # supports version 2.)
-curl -OL https://github.com/google/protobuf/releases/download/v3.3.0/protoc-3.3.0-linux-x86_64.zip \
-  && sudo unzip -o protoc-3.3.0-linux-x86_64.zip -d /usr bin/protoc \
-  && rm -f protoc-3.3.0-linux-x84_64.zip
+
+PROTOC_VERSION=3.5.1
+
+curl -OL https://github.com/google/protobuf/releases/download/v${PROTOC_VERSION}/protoc-${PROTOC_VERSION}-linux-x86_64.zip \
+  && sudo unzip -o protoc-${PROTOC_VERSION}-linux-x86_64.zip -d /usr bin/protoc \
+  && rm -f protoc-${PROTOC_VERSION}-linux-x84_64.zip
 
 # Install the TensorFlow C API.
 curl https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-cpu-linux-x86_64-1.1.0.tar.gz > libtensorflow.tar.gz \
