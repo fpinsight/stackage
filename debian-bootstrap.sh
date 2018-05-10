@@ -27,8 +27,11 @@ add-apt-repository -y --keyserver hkp://keyserver.ubuntu.com:80 'deb http://down
 
 GHCVER=8.2.2
 
-OCILIBVER=4.4.0
-RDKAFKAVER=0.11.1
+OCILIBVER=4.5.1
+RDKAFKAVER=0.11.4
+ROCKSDB_VERSION=5.12.4
+PROTOC_VERSION=3.5.2
+GRPC_VERSION=1.11.0
 
 apt-get update
 apt-get install -y \
@@ -177,13 +180,14 @@ update-alternatives --install "/usr/bin/ld" "ld" "/usr/bin/ld.bfd" 10
 update-alternatives --install "/usr/bin/llc" "llc" "/usr/bin/llc-3.9" 50
 update-alternatives --install "/usr/bin/opt" "opt" "/usr/bin/opt-3.9" 50
 
-# install rocksdb libs
+# install rocksdb libs and tools
 cd /tmp \
-    && wget https://github.com/facebook/rocksdb/archive/v5.8.tar.gz \
-    && tar xvf v5.8.tar.gz \
-    && cd rocksdb-5.8 \
-    && make static_lib \
-    && make shared_lib
+    && wget https://github.com/facebook/rocksdb/archive/v${ROCKSDB_VERSION}.tar.gz \
+    && tar xvf v${ROCKSDB_VERSION}.tar.gz \
+    && cd rocksdb-${ROCKSDB_VERSION} \
+    && DEBUG_LEVEL=0 make static_lib install-static shared_lib install-shared tools \
+    && cp sst_dump db_sanity_test db_stress write_stress ldb db_repl_stress rocksdb_dump rocksdb_undump blob_dump /usr/local/bin/ \
+    && rm -rf /tmp/rocksdb-${ROCKSDB_VERSION}
 
 # librdkafka
 cd /tmp \
@@ -231,11 +235,17 @@ wget -O - http://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - \
 # Install version 3 of the protobuf compiler.  (The `protobuf-compiler` package only
 # supports version 2.)
 
-PROTOC_VERSION=3.5.1
-
 curl -OL https://github.com/google/protobuf/releases/download/v${PROTOC_VERSION}/protoc-${PROTOC_VERSION}-linux-x86_64.zip \
-  && sudo unzip -o protoc-${PROTOC_VERSION}-linux-x86_64.zip -d /usr bin/protoc \
-  && rm -f protoc-${PROTOC_VERSION}-linux-x84_64.zip
+    && sudo unzip -o protoc-${PROTOC_VERSION}-linux-x86_64.zip -d /usr bin/protoc \
+    && rm -f protoc-${PROTOC_VERSION}-linux-x84_64.zip
+
+git clone -b v${GRPC_VERSION} https://github.com/grpc/grpc \
+    && cd grpc \
+    && git submodule update --init \
+    && make \
+    && make install \
+    && cd \
+    && rm -rf grpc
 
 # Install the TensorFlow C API.
 curl https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-cpu-linux-x86_64-1.1.0.tar.gz > libtensorflow.tar.gz \
