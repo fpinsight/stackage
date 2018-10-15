@@ -4,7 +4,7 @@
 # up-and-running on a freshly installed Debian-based system (including Ubuntu).
 
 # Quick start:
-# wget -O - https://raw.github.com/fpco/stackage/master/debian-bootstrap.sh | bash -ex
+# wget -O - https://raw.github.com/commercialhaskell/stackage/master/debian-bootstrap.sh | bash -ex
 
 # NOTE: Requires that GHC and Cabal are installed and on your PATH. For
 # instructions, see:
@@ -25,7 +25,7 @@ add-apt-repository -y --keyserver hkp://keyserver.ubuntu.com:80 'deb http://down
 add-apt-repository -y --keyserver hkp://keyserver.ubuntu.com:80 'deb http://download.mono-project.com/repo/debian wheezy-apache24-compat main'
 add-apt-repository -y --keyserver hkp://keyserver.ubuntu.com:80 'deb http://download.mono-project.com/repo/debian wheezy-libjpeg62-compat main'
 
-GHCVER=8.4.2
+GHCVER=8.6.1
 
 OCILIBVER=4.5.1
 RDKAFKAVER=0.11.4
@@ -113,6 +113,7 @@ apt-get install -y \
     libpq-dev \
     libre2-dev \
     libsasl2-dev \
+    librocksdb-dev \
     libsdl1.2-dev \
     libsdl2-dev \
     libsdl2-gfx-dev \
@@ -129,6 +130,7 @@ apt-get install -y \
     libtre-dev \
     libudev-dev \
     libusb-1.0-0-dev \
+    libvte-2.91-dev \
     libwebkitgtk-3.0-dev \
     libxau-dev \
     libxml2-dev \
@@ -182,11 +184,11 @@ wget -O - http://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - \
     && apt-get update \
     && apt-get install -y llvm-5.0
 
-# llvm-6.0 for llvm-hs (separate since it needs wget)
+# llvm-7.0 for llvm-hs (separate since it needs wget)
 wget -O - http://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - \
-    && add-apt-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-6.0 main" \
+    && add-apt-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-7 main" \
     && apt-get update \
-    && apt-get install -y llvm-6.0
+    && apt-get install -y llvm-7
 
 # Buggy versions of ld.bfd fail to link some Haskell packages:
 # https://sourceware.org/bugzilla/show_bug.cgi?id=17689. Gold is
@@ -291,15 +293,26 @@ curl https://download.libsodium.org/libsodium/releases/LATEST.tar.gz > libsodium
 	&& ./configure \
 	&& make install
 
+# Install secp256k1
+cd /tmp \
+  && git clone https://github.com/bitcoin-core/secp256k1.git \
+  && cd secp256k1 \
+  && ./autogen.sh \
+  && ./configure --enable-module-recovery \
+  && make \
+  && make install
+
+
 # NOTE: also update Dockerfile when cuda version changes
 # Install CUDA toolkit
 # The current version can be found at: https://developer.nvidia.com/cuda-downloads
-CUDA_PKG=8.0.61-1         # update this on new version
-CUDA_VER=${CUDA_PKG:0:3}
-CUDA_APT=${CUDA_VER/./-}
+CUDA_PKG=10.0.130-1
+CUDA_VER=10.0
+CUDA_APT=10-0
 
 pushd /tmp \
     && wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_${CUDA_PKG}_amd64.deb \
+    && apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub \
     && dpkg -i cuda-repo-ubuntu1604_${CUDA_PKG}_amd64.deb \
     && apt-get update -qq \
     && apt-get install -y cuda-drivers cuda-core-${CUDA_APT} cuda-cudart-dev-${CUDA_APT} cuda-cufft-dev-${CUDA_APT} cuda-cublas-dev-${CUDA_APT} cuda-cusparse-dev-${CUDA_APT} cuda-cusolver-dev-${CUDA_APT} \
@@ -314,3 +327,12 @@ pushd /tmp \
 apt-add-repository multiverse \
     && apt-get update \
     && apt-get install -y nvidia-cuda-dev
+
+# newer gcc version for yoga
+add-apt-repository ppa:ubuntu-toolchain-r/test \
+    && apt-get update \
+    && apt-get install gcc-7 \
+    && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-7
+
+export CLANG_PURE_LLVM_LIB_DIR=/usr/lib/llvm-3.9/lib;
+export CLANG_PURE_LLVM_INCLUDE_DIR=/usr/lib/llvm-3.9/include;
