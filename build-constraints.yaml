@@ -8,6 +8,9 @@ cabal-format-version: "2.2"
 # Constraints for brand new builds
 packages:
 
+    "Erik Schnetter <schnetter@gmail.com> @eschnett":
+        - mpi-hs < 0 # https://github.com/commercialhaskell/stackage/issues/4068
+
     "Yang Bo <pop.atry@gmail.com> @Atry":
         - control-dsl
 
@@ -54,6 +57,7 @@ packages:
         - dunai
         - rhine
         - rhine-gloss
+        - dunai-core
 
     "Paul Johnson <paul@cogito.org.uk> @PaulJohnson":
         - geodetics
@@ -532,7 +536,7 @@ packages:
         - tldr
         - fb
         - yesod-fb
-        - yesod-auth-fb
+        - yesod-auth-fb < 0 # https://github.com/psibi/yesod-auth-fb/issues/4
         - hourglass-orphans
         - wai-slack-middleware
         - sysinfo
@@ -1215,8 +1219,8 @@ packages:
         - ghcjs-perch < 0 # build failure with GHC 8.4
 
     "Tom Ellis <tom-stackage@jaguarpaw.co.uk> @tomjaguarpaw":
-        - opaleye < 0 # aeson 1.3
-        - product-profunctors < 0 # via contravariant-1.5
+        - opaleye
+        - product-profunctors
 
     "Samplecount stefan@samplecount.com @kaoskorobase":
         - shake-language-c
@@ -1264,7 +1268,7 @@ packages:
         - HaskellNet-SSL
 
     "Jens Petersen <juhpetersen@gmail.com> @juhp":
-        # - cabal-rpm
+        - cabal-rpm
         - fedora-haskell-tools
         - rpmbuild-order
         - simple-cmd
@@ -1317,8 +1321,8 @@ packages:
 
     "Tomas Carnecky @wereHamster":
         - avers
-        # - avers-api # avers, GHC 8.6
-        # - avers-server # cryptonite 0.25
+        - avers-api
+        - avers-server
         - css-syntax
         # - etcd # https://github.com/wereHamster/etcd-hs/issues/5
         - github-types
@@ -1403,14 +1407,15 @@ packages:
         - kleene
         - lattices
         - microstache
-        # - monad-http # http-types 0.12
         - OneTuple
         - postgresql-simple-url
         - range-set-list
         - regex-applicative-text
         - servant-dhall
         - servant-swagger-ui
-        # - servant-yaml # yaml-0.9.0 commercialhaskell/stackage#3823
+        - servant-swagger-ui-core
+        - servant-swagger-ui-redoc
+        - servant-yaml
         - singleton-bool
         - spdx < 0 # GHC 8.4 via base-4.11.0.0
         - splitmix
@@ -1683,6 +1688,7 @@ packages:
     "Andres Löh <andres@well-typed.com> @kosmikus":
         - generics-sop
         - records-sop
+        - sop-core
 
     "Vivian McPhail <haskell.vivian.mcphail@gmail.com> @amcphail":
         - hmatrix-gsl-stats
@@ -2339,7 +2345,6 @@ packages:
         - html-entity-map
         - mmark-cli
         - ghc-syntax-highlighter
-        - facts
 
     "Emmanuel Touzery <etouzery@gmail.com> @emmanueltouzery":
         - app-settings
@@ -3722,96 +3727,6 @@ packages:
         - aeson-typescript < 0
         - alarmclock < 0
         - algebra < 0
-        - amazonka < 0
-        - amazonka-apigateway < 0
-        - amazonka-application-autoscaling < 0
-        - amazonka-appstream < 0
-        - amazonka-athena < 0
-        - amazonka-autoscaling < 0
-        - amazonka-budgets < 0
-        - amazonka-certificatemanager < 0
-        - amazonka-cloudformation < 0
-        - amazonka-cloudfront < 0
-        - amazonka-cloudhsm < 0
-        - amazonka-cloudsearch < 0
-        - amazonka-cloudsearch-domains < 0
-        - amazonka-cloudtrail < 0
-        - amazonka-cloudwatch < 0
-        - amazonka-cloudwatch-events < 0
-        - amazonka-cloudwatch-logs < 0
-        - amazonka-codebuild < 0
-        - amazonka-codecommit < 0
-        - amazonka-codedeploy < 0
-        - amazonka-codepipeline < 0
-        - amazonka-cognito-identity < 0
-        - amazonka-cognito-idp < 0
-        - amazonka-cognito-sync < 0
-        - amazonka-config < 0
-        - amazonka-core < 0
-        - amazonka-datapipeline < 0
-        - amazonka-devicefarm < 0
-        - amazonka-directconnect < 0
-        - amazonka-discovery < 0
-        - amazonka-dms < 0
-        - amazonka-ds < 0
-        - amazonka-dynamodb < 0
-        - amazonka-dynamodb-streams < 0
-        - amazonka-ec2 < 0
-        - amazonka-ecr < 0
-        - amazonka-ecs < 0
-        - amazonka-efs < 0
-        - amazonka-elasticache < 0
-        - amazonka-elasticbeanstalk < 0
-        - amazonka-elasticsearch < 0
-        - amazonka-elastictranscoder < 0
-        - amazonka-elb < 0
-        - amazonka-elbv2 < 0
-        - amazonka-emr < 0
-        - amazonka-gamelift < 0
-        - amazonka-glacier < 0
-        - amazonka-health < 0
-        - amazonka-iam < 0
-        - amazonka-importexport < 0
-        - amazonka-inspector < 0
-        - amazonka-iot < 0
-        - amazonka-iot-dataplane < 0
-        - amazonka-kinesis < 0
-        - amazonka-kinesis-analytics < 0
-        - amazonka-kinesis-firehose < 0
-        - amazonka-kms < 0
-        - amazonka-lambda < 0
-        - amazonka-lightsail < 0
-        - amazonka-marketplace-analytics < 0
-        - amazonka-marketplace-metering < 0
-        - amazonka-ml < 0
-        - amazonka-opsworks < 0
-        - amazonka-opsworks-cm < 0
-        - amazonka-pinpoint < 0
-        - amazonka-polly < 0
-        - amazonka-rds < 0
-        - amazonka-redshift < 0
-        - amazonka-rekognition < 0
-        - amazonka-route53 < 0
-        - amazonka-route53-domains < 0
-        - amazonka-s3 < 0
-        - amazonka-sdb < 0
-        - amazonka-servicecatalog < 0
-        - amazonka-ses < 0
-        - amazonka-shield < 0
-        - amazonka-sms < 0
-        - amazonka-snowball < 0
-        - amazonka-sns < 0
-        - amazonka-sqs < 0
-        - amazonka-ssm < 0
-        - amazonka-stepfunctions < 0
-        - amazonka-storagegateway < 0
-        - amazonka-sts < 0
-        - amazonka-support < 0
-        - amazonka-swf < 0
-        - amazonka-test < 0
-        - amazonka-waf < 0
-        - amazonka-workspaces < 0
-        - amazonka-xray < 0
         - amqp < 0
         - antiope-athena < 0
         - antiope-core < 0
@@ -3828,7 +3743,6 @@ packages:
         - atom-conduit < 0
         - authenticate-oauth < 0
         - autoexporter < 0
-        - avers < 0
         - avwx < 0
         - axel < 0
         - bank-holidays-england < 0
@@ -3862,7 +3776,6 @@ packages:
         - cheapskate-highlight < 0
         - cheapskate-lucid < 0
         - check-email < 0
-        - cipher-aes < 0
         - cipher-aes128 < 0
         - cipher-blowfish < 0
         - cipher-camellia < 0
@@ -3874,9 +3787,7 @@ packages:
         - clash-ghc < 0
         - clash-lib < 0
         - clash-prelude < 0
-        - classy-prelude-yesod < 0
         - classyplate < 0
-        - clientsession < 0
         - closed < 0
         - code-builder < 0
         - codo-notation < 0
@@ -3888,19 +3799,12 @@ packages:
         - containers-unicode-symbols < 0
         - country < 0
         - cpphs < 0
-        - cprng-aes < 0
         - cql-io < 0
         - credential-store < 0
-        - crypto-cipher-tests < 0
-        - crypto-cipher-types < 0
         - crypto-pubkey < 0
         - crypto-pubkey-types < 0
-        - crypto-random < 0
         - cryptocipher < 0
         - cryptocompare < 0
-        - cryptohash < 0
-        - cryptohash-cryptoapi < 0
-        - cryptonite-conduit < 0
         - cryptonite-openssl < 0
         - csg < 0
         - cue-sheet < 0
@@ -3935,7 +3839,6 @@ packages:
         - edit < 0
         - ekg-core < 0
         - ekg-statsd < 0
-        - email-validate < 0
         - emd < 0
         - enummapset < 0
         - envy < 0
@@ -3948,7 +3851,6 @@ packages:
         - fay < 0
         - fay-base < 0
         - fay-dom < 0
-        - fb < 0
         - feed < 0
         - file-modules < 0
         - filecache < 0
@@ -3956,7 +3858,6 @@ packages:
         - flac < 0
         - flac-picture < 0
         - flow < 0
-        - fmt < 0
         - fold-debounce-conduit < 0
         - friday < 0
         - friday-juicypixels < 0
@@ -3997,7 +3898,6 @@ packages:
         - haskell-lsp < 0
         - haskell-lsp-types < 0
         - haskell-spacegoo < 0
-        - haskell-src-meta < 0
         - haskell-tools-ast < 0
         - haskell-tools-backend-ghc < 0
         - haskell-tools-builtin-refactorings < 0
@@ -4037,7 +3937,6 @@ packages:
         - hoogle < 0
         - hoopl < 0
         - hopenpgp-tools < 0
-        - hpack < 0
         - hpqtypes < 0
         - hquantlib < 0
         - hsebaysdk < 0
@@ -4050,8 +3949,6 @@ packages:
         - hsx-jmacro < 0
         - hsyslog-udp < 0
         - http-client-openssl < 0
-        - http-media < 0
-        - http-reverse-proxy < 0
         - http-streams < 0
         - hunit-dejafu < 0
         - hw-json < 0
@@ -4070,7 +3967,6 @@ packages:
         - influxdb < 0
         - inline-java < 0
         - inliterate < 0
-        - interpolate < 0
         - interpolatedstring-perl6 < 0
         - invertible < 0
         - invertible-grammar < 0
@@ -4113,7 +4009,6 @@ packages:
         - logging-effect-extra-file < 0
         - logging-effect-extra-handler < 0
         - lrucache < 0
-        - lucid < 0
         - lucid-extras < 0
         - mapquest-api < 0
         - marvin-interpolate < 0
@@ -4140,7 +4035,6 @@ packages:
         - morte < 0
         - multipart < 0
         - mwc-probability-transition < 0
-        - mysql-haskell < 0
         - mysql-haskell-nem < 0
         - mysql-haskell-openssl < 0
         - named < 0
@@ -4170,14 +4064,7 @@ packages:
         - parallel-io < 0
         - partial-order < 0
         - perf < 0
-        - persistent < 0
-        - persistent-iproute < 0
-        - persistent-mysql < 0
-        - persistent-mysql-haskell < 0
-        - persistent-postgresql < 0
         - persistent-refs < 0
-        - persistent-sqlite < 0
-        - persistent-template < 0
         - picosat < 0
         - pier < 0
         - pier-core < 0
@@ -4221,7 +4108,6 @@ packages:
         - req-url-extra < 0
         - require < 0
         - rerebase < 0
-        - rethinkdb-client-driver < 0
         - rhine < 0
         - rhine-gloss < 0
         - rollbar-hs < 0
@@ -4233,45 +4119,29 @@ packages:
         - sandi < 0
         - scalendar < 0
         - search-algorithms < 0
-        - securemem < 0
         - seqid < 0
         - seqid-streams < 0
         - serialise < 0
-        - servant < 0
         - servant-JuicyPixels < 0
         - servant-auth < 0
         - servant-auth-client < 0
         - servant-auth-docs < 0
         - servant-auth-server < 0
         - servant-auth-swagger < 0
-        - servant-blaze < 0
-        - servant-cassava < 0
         - servant-checked-exceptions < 0
         - servant-checked-exceptions-core < 0
-        - servant-client < 0
-        - servant-client-core < 0
         - servant-dhall < 0
-        - servant-docs < 0
         - servant-elm < 0
         - servant-exceptions < 0
-        - servant-foreign < 0
         - servant-github-webhook < 0
-        - servant-js < 0
-        - servant-kotlin < 0
-        - servant-lucid < 0
-        - servant-mock < 0
         - servant-pandoc < 0
         - servant-quickcheck < 0
         - servant-rawm < 0
         - servant-ruby < 0
-        - servant-server < 0
         - servant-static-th < 0
         - servant-streaming < 0
         - servant-streaming-client < 0
         - servant-streaming-server < 0
-        - servant-swagger < 0
-        - servant-swagger-ui < 0
-        - servant-swagger-ui-core < 0
         - servant-tracing < 0
         - servant-websockets < 0
         - serverless-haskell < 0
@@ -4283,7 +4153,6 @@ packages:
         - shake-language-c < 0
         - shikensu < 0
         - simplest-sqlite < 0
-        - slack-web < 0
         - slave-thread < 0
         - smtp-mail < 0
         - snap-blaze < 0
@@ -4301,17 +4170,14 @@ packages:
         - static-text < 0
         - stm-containers < 0
         - stm-hamt < 0
-        - store < 0
         - stratosphere < 0
         - stringsearch < 0
         - strive < 0
         - summoner < 0
         - svg-builder < 0
-        - swagger2 < 0
         - swish < 0
         - tasty-dejafu < 0
         - tasty-stats < 0
-        - tcp-streams < 0
         - tcp-streams-openssl < 0
         - tdigest < 0
         - telegram-bot-simple < 0
@@ -4348,7 +4214,6 @@ packages:
         - vector-space < 0
         - vectortiles < 0
         - versions < 0
-        - wai-app-static < 0
         - wai-cli < 0
         - wai-middleware-caching-lru < 0
         - wai-middleware-consul < 0
@@ -4358,7 +4223,6 @@ packages:
         - wai-middleware-travisci < 0
         - wai-slack-middleware < 0
         - wai-transformers < 0
-        - wai-websockets < 0
         - warp-tls-uid < 0
         - wave < 0
         - web-plugins < 0
@@ -4380,29 +4244,7 @@ packages:
         - xml-html-qq < 0
         - xmonad-contrib < 0
         - xmonad-extras < 0
-        - yesod < 0
-        - yesod-alerts < 0
-        - yesod-auth < 0
-        - yesod-auth-fb < 0
         - yesod-auth-hashdb < 0
-        - yesod-bin < 0
-        - yesod-core < 0
-        - yesod-csp < 0
-        - yesod-eventsource < 0
-        - yesod-fb < 0
-        - yesod-form < 0
-        - yesod-form-bootstrap4 < 0
-        - yesod-gitrepo < 0
-        - yesod-gitrev < 0
-        - yesod-newsfeed < 0
-        - yesod-paginator < 0
-        - yesod-persistent < 0
-        - yesod-recaptcha2 < 0
-        - yesod-sitemap < 0
-        - yesod-static < 0
-        - yesod-test < 0
-        - yesod-text-markdown < 0
-        - yesod-websockets < 0
 
         # failed to build
         - ClustalParser < 0
@@ -4424,14 +4266,12 @@ packages:
         - large-hashable < 0
         - libmpd < 0
         - llvm-hs-pretty < 0
-        - matrix-static < 0
         - med-module < 0
         - monad-recorder < 0
         - multistate < 0
         - o-clock < 0
         - stm-stats < 0
         - teardown < 0
-        - typenums < 0
         - typography-geometry < 0
         - universe-instances-extended < 0
         - vivid < 0
@@ -4472,6 +4312,15 @@ packages:
 
         # https://github.com/commercialhaskell/stackage/issues/4053
         - yaml < 0.11
+
+        # https://github.com/commercialhaskell/stackage/issues/4056
+        - postgresql-simple < 0.6
+
+        # https://github.com/commercialhaskell/stackage/issues/4066
+        - generics-sop < 0.4.0.0
+
+        # https://github.com/commercialhaskell/stackage/issues/4073
+        - pretty-show < 1.9
 
 # end of packages
 
@@ -4676,12 +4525,12 @@ skipped-tests:
     - ed25519 # QuickCheck, hlint and more
     - hackage-security # QuickCheck
     - haddock-library # base-compat-0.10.1, hspec-2.5.1
+    - haskell-src-meta # GHC 8.6, template-haskell
     - http-streams # via snap-server-1.1.0.0
     - indents # tasty 0.12 and tasty-hunit 0.10
     - ip # hspec 2.5 https://github.com/andrewthad/haskell-ip/issues/33
     - language-ecmascript # testing-feat 1.1.0.0
     - makefile # GHC 8.2
-    - mysql-haskell # tasty
     - next-ref # hspec 2.3
     - partial-order # HUnit 1.6
     - serialise
@@ -4746,7 +4595,6 @@ skipped-tests:
     - skylighting-core
     - speedy-slice
     - static-text
-    - store
     - structs
     - tomland
     - universum
@@ -4838,6 +4686,9 @@ skipped-tests:
     - time-parsers
     - time-parsers
     - vec
+
+    # test build is failing
+    - avro
 
     # Uses Cabal's "library internal" stanza feature
     - s3-signer
@@ -5001,7 +4852,6 @@ expected-test-failures:
     - http-client-tls # https://github.com/snoyberg/http-client/issues/360
     - http-link-header # https://github.com/myfreeweb/http-link-header/issues/7
     - mmark # https://github.com/commercialhaskell/stackage/issues/3906#issuecomment-413061849
-    - servant-swagger # https://github.com/haskell-servant/servant-swagger/issues/89
     - unicode-show # https://github.com/nushio3/unicode-show/issues/2
     - wreq
     - xml-picklers # https://github.com/Philonous/xml-picklers/issues/5
@@ -5017,12 +4867,12 @@ expected-test-failures:
     - hoopl # https://github.com/haskell/hoopl/issues/50
     - hspec-expectations-pretty-diff # GHC 8 issue not reported upstream since issue tracker disabled
     - hweblib # https://github.com/aycanirican/hweblib/issues/3
+    - multiset # doctests require Glob, a hidden package
     - perf # https://github.com/fpco/stackage/pull/2859
     - picosat # https://github.com/fpco/stackage/pull/2382
     - pkcs10 # https://github.com/fcomb/pkcs10-hs/issues/2
     - sourcemap # https://github.com/chrisdone/sourcemap/issues/3
     - squeal-postgresql # https://github.com/fpco/stackage/issues/3180
-    - store # https://github.com/fpco/store/issues/125
     - text-icu # https://github.com/bos/text-icu/issues/32
     - text-ldap # https://github.com/khibino/haskell-text-ldap/issues/1
     - tls # https://github.com/vincenthz/hs-tls/issues/247
@@ -5470,7 +5320,6 @@ tell-me-when-its-released:
 - freer-effects-0.3.0.1 # re-enable extensible benchmarks
 - hoopl-3.10.2.2 # reenable tests, https://github.com/haskell/hoopl/issues/50
 - point-octree-0.5.5.3 # re-enable test and then we can resolve https://github.com/fpco/lts-haskell/issues/27
-- store-0.5.0 # remove from skipped-tests, https://github.com/fpco/store/issues/125
 - yarr-1.4.0.2 # Re-enable package https://github.com/fpco/stackage/issues/1876
 
 # Packages which should be hidden after registering, to avoid module name
