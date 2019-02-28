@@ -12,28 +12,19 @@
 
 set -exu
 
-mkdir /home/stackage -p
+mkdir -p /home/stackage
 
+export LANG=C.UTF-8
 export DEBIAN_FRONTEND=noninteractive
-apt-get update
-apt-get install -y software-properties-common
-
-add-apt-repository ppa:hvr/ghc -y
-add-apt-repository -y ppa:marutter/rrutter
-apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-add-apt-repository -y --keyserver hkp://keyserver.ubuntu.com:80 'deb http://download.mono-project.com/repo/debian wheezy main'
-add-apt-repository -y --keyserver hkp://keyserver.ubuntu.com:80 'deb http://download.mono-project.com/repo/debian wheezy-apache24-compat main'
-add-apt-repository -y --keyserver hkp://keyserver.ubuntu.com:80 'deb http://download.mono-project.com/repo/debian wheezy-libjpeg62-compat main'
-
-GHCVER=8.6.1
 
 OCILIBVER=4.5.1
-RDKAFKAVER=0.11.4
+RDKAFKAVER=0.11.6
 ROCKSDB_VERSION=5.12.4
 PROTOC_VERSION=3.5.2
 GRPC_VERSION=1.11.0
 
 apt-get update
+
 apt-get install -y \
     apt-transport-https \
     build-essential \
@@ -45,10 +36,6 @@ apt-get install -y \
     g++ \
     gawk \
     libgflags-dev \
-    ghc-$GHCVER \
-    ghc-$GHCVER-dyn \
-    ghc-$GHCVER-htmldocs \
-    ghc-$GHCVER-prof \
     git \
     gnupg \
     gradle \
@@ -69,16 +56,16 @@ apt-get install -y \
     libfftw3-dev \
     libflac-dev \
     libfreenect-dev \
-    libgd2-xpm-dev \
+    libgd-dev \
     libgeoip-dev \
     libgirepository1.0-dev \
     libglfw3-dev \
     libglib2.0-dev \
     libglu1-mesa-dev \
     libgmp3-dev \
-    libgnutls-dev \
+    libgnutls28-dev \
     libgsasl7-dev \
-    libgsl0-dev \
+    libgsl-dev \
     libgtk-3-dev \
     libgtk2.0-dev \
     libgtksourceview-3.0-dev \
@@ -103,7 +90,7 @@ apt-get install -y \
     libmp3lame-dev \
     libmpfr-dev \
     libmysqlclient-dev \
-    libncurses-dev \
+    libncurses5-dev \
     libnfc-dev \
     liboath-dev \
     libnotify-dev \
@@ -112,6 +99,7 @@ apt-get install -y \
     libpango1.0-dev \
     libpcap0.8-dev \
     libpq-dev \
+    libprotobuf-dev \
     libre2-dev \
     libsasl2-dev \
     librocksdb-dev \
@@ -121,8 +109,10 @@ apt-get install -y \
     libsdl2-image-dev \
     libsdl2-mixer-dev \
     libsdl2-ttf-dev \
+    libsecp256k1-dev \
     libsnappy-dev \
     libsndfile1-dev \
+    libsodium-dev \
     libsox-dev \
     libsqlite3-dev \
     libssl-dev \
@@ -141,15 +131,13 @@ apt-get install -y \
     libzip-dev \
     libzstd-dev \
     libzmq3-dev \
-    llvm-3.9 \
+    llvm-6.0 \
     locales \
     m4 \
     minisat \
     mono-mcs \
     nettle-dev \
     ninja-build \
-    nodejs \
-    npm \
     openjdk-8-jdk \
     python-mpltoolkits.basemap \
     python3-matplotlib \
@@ -158,13 +146,20 @@ apt-get install -y \
     r-base \
     r-base-dev \
     ruby-dev \
+    software-properties-common \
     sudo \
     unixodbc-dev \
     wget \
     xclip \
     z3 \
     zip \
-    zlib1g-dev
+    zlib1g-dev \
+    zsh
+
+GHCVER=8.6.3
+
+add-apt-repository ppa:hvr/ghc -y
+apt-get install -y ghc-$GHCVER ghc-$GHCVER-dyn ghc-$GHCVER-htmldocs ghc-$GHCVER-prof
 
 # odbc
 curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
@@ -179,15 +174,9 @@ curl -sSL https://get.haskellstack.org/ | sh
 # Put documentation where we expect it
 mv /opt/ghc/$GHCVER/share/doc/ghc-$GHCVER/ /opt/ghc/$GHCVER/share/doc/ghc
 
-# llvm-5.0 for GHC (separate since it needs wget)
-wget -O - http://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - \
-    && add-apt-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-5.0 main" \
-    && apt-get update \
-    && apt-get install -y llvm-5.0
-
 # llvm-7.0 for llvm-hs (separate since it needs wget)
 wget -O - http://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - \
-    && add-apt-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-7 main" \
+    && add-apt-repository "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-7 main" \
     && apt-get update \
     && apt-get install -y llvm-7
 
@@ -201,14 +190,13 @@ update-alternatives --install "/usr/bin/ld" "ld" "/usr/bin/ld.bfd" 10
 # This version is tracked here:
 # https://ghc.haskell.org/trac/ghc/wiki/Commentary/Compiler/Backends/LLVM/Installing
 #
-# GHC 8.4 requires LLVM 5.0 tools (specifically, llc-5.0 and opt-5.0).
-update-alternatives --install "/usr/bin/llc" "llc" "/usr/bin/llc-5.0" 50
-update-alternatives --install "/usr/bin/opt" "opt" "/usr/bin/opt-5.0" 50
+# GHC 8.6 requires LLVM 6.0 tools (specifically, llc-6.0 and opt-6.0).
+update-alternatives --install "/usr/bin/llc" "llc" "/usr/bin/llc-6.0" 50
+update-alternatives --install "/usr/bin/opt" "opt" "/usr/bin/opt-6.0" 50
 
-# Made sure a "node" binary is in the path, as well as "nodejs".
-# A historical naming collision on Debian means that the binary is called "nodejs",
-# but some tools like tsc still expect "node" to exist.
-ln -s /usr/bin/nodejs /usr/bin/node
+# nodejs 10 (nodejs8 in bionic needs conflicting libssl10-dev)
+curl -sL https://deb.nodesource.com/setup_10.x | bash -
+apt-get install -y nodejs
 
 # install rocksdb libs and tools
 cd /tmp \
@@ -258,12 +246,57 @@ echo "/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server/" > /etc/ld.so.conf
 
 # Install erlang/otp platform and its dependencies
 ERLANG_VERSION="20.2.2"
-ERLANG_DEB_FILE="esl-erlang_${ERLANG_VERSION}-1~debian~jessie_amd64.deb"
+ERLANG_DEB_FILE="esl-erlang_21.2-1~ubuntu~bionic_amd64.deb"
 pushd /tmp \
-    && wget https://packages.erlang-solutions.com/erlang/esl-erlang/FLAVOUR_1_general/${ERLANG_DEB_FILE} \
+    && wget http://packages.erlang-solutions.com/site/esl/esl-erlang/FLAVOUR_1_general/${ERLANG_DEB_FILE} \
     && (dpkg -i ${ERLANG_DEB_FILE}; apt-get install -yf) \
     && rm ${ERLANG_DEB_FILE} \
     && popd
+
+# Install the TensorFlow C API.
+curl https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-cpu-linux-x86_64-1.1.0.tar.gz > libtensorflow.tar.gz \
+    && sudo tar zxf libtensorflow.tar.gz -C /usr \
+    && rm libtensorflow.tar.gz \
+    && ldconfig
+
+# NOTE: also update Dockerfile when cuda version changes
+# Install CUDA toolkit
+# The current version can be found at: https://developer.nvidia.com/cuda-downloads
+CUDA_PKG=10.0.130-1
+CUDA_VER=10.0
+CUDA_APT=10-0
+
+pushd /tmp \
+    && wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-repo-ubuntu1804_${CUDA_PKG}_amd64.deb \
+    && apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub \
+    && dpkg -i cuda-repo-ubuntu1804_${CUDA_PKG}_amd64.deb \
+    && apt-get update -qq \
+    && apt-get install -y cuda-drivers cuda-core-${CUDA_APT} cuda-cudart-dev-${CUDA_APT} cuda-cufft-dev-${CUDA_APT} cuda-cublas-dev-${CUDA_APT} cuda-cusparse-dev-${CUDA_APT} cuda-cusolver-dev-${CUDA_APT} \
+    && rm cuda-repo-ubuntu1804_${CUDA_PKG}_amd64.deb \
+    && export CUDA_PATH=/usr/local/cuda-${CUDA_VER} \
+    && export LD_LIBRARY_PATH=${CUDA_PATH}/nvvm/lib64:${LD_LIBRARY_PATH+x} \
+    && export LD_LIBRARY_PATH=${CUDA_PATH}/lib64:${LD_LIBRARY_PATH} \
+    && export PATH=${CUDA_PATH}/bin:${PATH} \
+    && popd
+
+# non-free repo for mediabus-fdk-aac
+apt-add-repository multiverse \
+    && apt-get update \
+    && apt-get install -y nvidia-cuda-dev
+
+export CLANG_PURE_LLVM_LIB_DIR=/usr/lib/llvm-6.0/lib;
+export CLANG_PURE_LLVM_INCLUDE_DIR=/usr/lib/llvm-6.0/include;
+
+# finally run:
+ldconfig
+# EOF: don't build anything below this line
+
+# protoc, for proto-lens-combinators test suite
+# Instructions from: https://google.github.io/proto-lens/installing-protoc.html
+#PROTOC_ZIP=protoc-3.3.0-linux-x86_64.zip
+#curl -OL https://github.com/google/protobuf/releases/download/v3.3.0/$PROTOC_ZIP
+#sudo unzip -o $PROTOC_ZIP -d /usr bin/protoc
+#rm -f $PROTOC_ZIP
 
 # Install version 3 of the protobuf compiler.  (The `protobuf-compiler` package only
 # supports version 2.)
@@ -280,60 +313,12 @@ git clone -b v${GRPC_VERSION} https://github.com/grpc/grpc \
     && cd \
     && rm -rf grpc
 
-# Install the TensorFlow C API.
-curl https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-cpu-linux-x86_64-1.1.0.tar.gz > libtensorflow.tar.gz \
-    && sudo tar zxf libtensorflow.tar.gz -C /usr \
-    && rm libtensorflow.tar.gz \
-    && ldconfig
+# Update library search paths
+echo /usr/local/cuda-10.0/lib64 > /etc/ld.so.conf.d/cuda.conf
+echo /usr/local/cuda-10.0/nvvm/lib64 >> /etc/ld.so.conf.d/cuda.conf
 
-# Install libsodium
-curl https://download.libsodium.org/libsodium/releases/LATEST.tar.gz > libsodium.tar.gz \
-	&& sudo tar xfz libsodium.tar.gz -C /tmp \
-	&& rm libsodium.tar.gz \
-	&& cd /tmp/libsodium-stable \
-	&& ./configure \
-	&& make install
+echo /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server > /etc/ld.so.conf.d/java.conf
 
-# Install secp256k1
-cd /tmp \
-  && git clone https://github.com/bitcoin-core/secp256k1.git \
-  && cd secp256k1 \
-  && ./autogen.sh \
-  && ./configure --enable-module-recovery \
-  && make \
-  && make install
+echo /usr/lib/llvm-3.7/lib > /etc/ld.so.conf.d/llvm.conf
 
-
-# NOTE: also update Dockerfile when cuda version changes
-# Install CUDA toolkit
-# The current version can be found at: https://developer.nvidia.com/cuda-downloads
-CUDA_PKG=10.0.130-1
-CUDA_VER=10.0
-CUDA_APT=10-0
-
-pushd /tmp \
-    && wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_${CUDA_PKG}_amd64.deb \
-    && apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub \
-    && dpkg -i cuda-repo-ubuntu1604_${CUDA_PKG}_amd64.deb \
-    && apt-get update -qq \
-    && apt-get install -y cuda-drivers cuda-core-${CUDA_APT} cuda-cudart-dev-${CUDA_APT} cuda-cufft-dev-${CUDA_APT} cuda-cublas-dev-${CUDA_APT} cuda-cusparse-dev-${CUDA_APT} cuda-cusolver-dev-${CUDA_APT} \
-    && rm cuda-repo-ubuntu1604_${CUDA_PKG}_amd64.deb \
-    && export CUDA_PATH=/usr/local/cuda-${CUDA_VER} \
-    && export LD_LIBRARY_PATH=${CUDA_PATH}/nvvm/lib64:${LD_LIBRARY_PATH+x} \
-    && export LD_LIBRARY_PATH=${CUDA_PATH}/lib64:${LD_LIBRARY_PATH} \
-    && export PATH=${CUDA_PATH}/bin:${PATH} \
-    && popd
-
-# non-free repo for mediabus-fdk-aac
-apt-add-repository multiverse \
-    && apt-get update \
-    && apt-get install -y nvidia-cuda-dev
-
-# newer gcc version for yoga
-add-apt-repository ppa:ubuntu-toolchain-r/test \
-    && apt-get update \
-    && apt-get install gcc-7 \
-    && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-7
-
-export CLANG_PURE_LLVM_LIB_DIR=/usr/lib/llvm-3.9/lib;
-export CLANG_PURE_LLVM_INCLUDE_DIR=/usr/lib/llvm-3.9/include;
+ldconfig
