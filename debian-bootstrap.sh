@@ -10,7 +10,7 @@
 # instructions, see:
 #    http://www.stackage.org/install
 
-set -exu
+set -exuo pipefail
 
 mkdir -p /home/stackage
 
@@ -22,6 +22,14 @@ RDKAFKAVER=0.11.6
 ROCKSDB_VERSION=5.17.2
 PROTOC_VERSION=3.6.1
 GRPC_VERSION=1.19.0
+
+# Get curl
+apt-get update
+apt-get install -y curl
+
+# Get Stack and GHC
+curl -sSL https://get.haskellstack.org/ | sh -s - -d /usr/bin
+stack setup --resolver ghc-$GHCVER
 
 apt-get update
 
@@ -156,11 +164,6 @@ apt-get install -y \
     zlib1g-dev \
     zsh
 
-GHCVER=8.6.3
-
-add-apt-repository ppa:hvr/ghc -y
-apt-get install -y ghc-$GHCVER ghc-$GHCVER-dyn ghc-$GHCVER-htmldocs ghc-$GHCVER-prof
-
 # odbc
 curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 curl https://packages.microsoft.com/config/debian/9/prod.list > /etc/apt/sources.list.d/mssql-release.list
@@ -168,11 +171,6 @@ apt-get update
 ACCEPT_EULA=Y apt-get install msodbcsql17 -y
 
 locale-gen en_US.UTF-8
-
-curl -sSL https://get.haskellstack.org/ | sh
-
-# Put documentation where we expect it
-mv /opt/ghc/$GHCVER/share/doc/ghc-$GHCVER/ /opt/ghc/$GHCVER/share/doc/ghc
 
 # llvm-7.0 for llvm-hs (separate since it needs wget)
 wget -O - http://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - \
@@ -287,10 +285,6 @@ apt-add-repository multiverse \
 export CLANG_PURE_LLVM_LIB_DIR=/usr/lib/llvm-6.0/lib;
 export CLANG_PURE_LLVM_INCLUDE_DIR=/usr/lib/llvm-6.0/include;
 
-# finally run:
-ldconfig
-# EOF: don't build anything below this line
-
 # protoc, for proto-lens-combinators test suite
 # Instructions from: https://google.github.io/proto-lens/installing-protoc.html
 #PROTOC_ZIP=protoc-3.3.0-linux-x86_64.zip
@@ -322,3 +316,8 @@ echo /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server > /etc/ld.so.conf.d/
 echo /usr/lib/llvm-3.7/lib > /etc/ld.so.conf.d/llvm.conf
 
 ldconfig
+# EOF: don't build anything below this line
+
+# Cleanup
+apt-get clean
+rm -rf /var/lib/apt/lists/*
