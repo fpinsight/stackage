@@ -37,7 +37,6 @@ apt-get install -y \
     apt-transport-https \
     build-essential \
     cmake \
-    curl \
     freeglut3-dev \
     freetds-dev \
     fsharp \
